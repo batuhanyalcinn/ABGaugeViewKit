@@ -13,12 +13,17 @@ import UIKit
 public class ABGaugeView: UIView {
     
     // MARK:- @IBInspectable
-    @IBInspectable public var colorCodes: String = "929918,C8CC86,66581A,3A4A73,185D99"
+    @IBInspectable public var colorCodes: String = "33C6A8,33C6A8,33C6A8,33C6A8,33C6A8"
     @IBInspectable public var areas: String = "20,20,20,20,20"
     @IBInspectable public var arcAngle: CGFloat = 2.4
     
+    var oldNeedleValue: CGFloat = 0
+    
     @IBInspectable public var needleColor: UIColor = UIColor(red: 18/255.0, green: 112/255.0, blue: 178/255.0, alpha: 1.0)
     @IBInspectable public var needleValue: CGFloat = 0 {
+        willSet {
+            self.oldNeedleValue = needleValue
+        }
         didSet {
             setNeedsDisplay()
         }
@@ -210,10 +215,9 @@ public class ABGaugeView: UIView {
         let theD = (radians - thisRadians)/2
         firstAngle += theD
         let needleValue = radian(for: self.needleValue) + firstAngle
-        animate(triangleLayer: triangleLayer, shadowLayer: shadowLayer, fromValue: 0, toValue: needleValue*1.05, duration: 0.5) {
-            self.animate(triangleLayer: triangleLayer, shadowLayer: shadowLayer, fromValue: needleValue*1.05, toValue: needleValue*0.95, duration: 0.4, callBack: {
-                self.animate(triangleLayer: triangleLayer, shadowLayer: shadowLayer, fromValue: needleValue*0.95, toValue: needleValue, duration: 0.6, callBack: {})
-            })
+        let oldNeedleValue = radian(for: self.oldNeedleValue) + firstAngle
+        animate(triangleLayer: triangleLayer, shadowLayer: shadowLayer, fromValue: oldNeedleValue, toValue: needleValue, duration: 0) {
+            
         }
     }
     
